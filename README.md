@@ -50,7 +50,7 @@ Basically, you'll just need to write a callback method.
 
 ````
 
-You will get Apache-like output:
+You will get ApacheBench-like output:
 ````
 Test started.
 Awaiting termination...
