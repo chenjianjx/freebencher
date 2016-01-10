@@ -18,7 +18,7 @@ public class FbTest {
 		FbJob job = new FbJob();
 		FbJobOptions options = new FbJobOptions();
 		options.setConcurrency(5);
-		options.setQuiet(true);
+		//options.setQuiet(true);
 		options.setNumOfTests(222);
 		job.setOptions(options);
 		FbTarget target = new FbTarget() {
