@@ -80,6 +80,6 @@ Percentage of the test finished within a certain time (ms)
 2. More __Parameterizable__ compared to Apache ab, which can take only one fixed URL.
 3. Most important, it is __Embeddable__. You __integrate the testing framework into your own java project__, so you can freely use your own business classes. On the contrary, other tools such as JMeter requires you to package your code into their library. The packaging and integration is very troublesome and cannot be automated. __This is why freebencher was written.__   
 4. __Freedom to developers__. 
- * You can test any behavior that can be written in Java, not just Http Severs. 
+ * You can test any behavior that can be written in Java, not just Http Servers. 
  * You can prepare your test data in any way in Java, as long as the callback method can reference it.  Aren't you sick of generating data files and "browse" it for GUI tools? 
  * You can make assertions of the correctness of the testing results anyway you want using Java code.
