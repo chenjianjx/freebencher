@@ -35,7 +35,13 @@ Basically, you'll just need to write a callback method.
 
 		FbJobResult result = Freebencher.benchmark(new FbTarget() { //the behavior
 			@Override
-			public boolean invoke() {
+			public boolean preInvoke(Map<String,Object> context) {
+				//...
+				return true;
+			}		
+		
+			@Override
+			public boolean invoke(Map<String,Object> context) {
 				User user = userList.get(RandomUtils
 						.nextInt(userList.size()));
 				int statusCode = remoteServiceToTest.doLogin(user.getUsername(), user.getClearPassword());
@@ -59,7 +65,6 @@ Concurrency:             5
 Time taken for tests:    119ms
 Successful tests:        50
 Failed tests:            0
-Tests per second:        420.16806722689074
 Mean time per test:      11.38ms
 Percentage of the test finished within a certain time (ms)
 50%:                     11
