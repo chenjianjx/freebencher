@@ -9,6 +9,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * @author chenjianjx@gmail.com
  *
  */
+@SuppressWarnings("deprecation")
 public class FbJob {
 
 	private FbTarget target;
@@ -21,8 +22,13 @@ public class FbJob {
 		return target;
 	}
 
+	@Deprecated
 	public void setTarget(FbTarget target) {
 		this.target = target;
+	}
+
+	public void setCommand(FbCommand command) {
+		this.target = command;
 	}
 
 	public FbJobOptions getOptions() {
@@ -43,8 +49,7 @@ public class FbJob {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this,
-				ToStringStyle.MULTI_LINE_STYLE);
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }

@@ -3,6 +3,8 @@ package org.freebencher;
 import static org.freebencher.util.FbUtils.assertNotNull;
 import static org.freebencher.util.FbUtils.assertPositive;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,27 +20,24 @@ import org.apache.commons.lang.time.StopWatch;
  * @author chenjianjx@gmail.com
  *
  */
+@SuppressWarnings("deprecation")
 public class FbRunner {
 
 	public void run(final FbJob job) {
 		// validate and init data
 		assertNotNull(job, "job cannot be null");
-		assertNotNull(job.getTarget(),
-				"the test target cannot be null. What you want to test? ");
+		assertNotNull(job.getTarget(), "the test target cannot be null. What you want to test? ");
 		if (job.getOptions() == null) {
 			job.setOptions(FbJobOptions.defaultOptions());
 		}
-		assertPositive(job.getOptions().getConcurrency(),
-				"concurrency should be > 0");
-		assertPositive(job.getOptions().getNumOfTests(),
-				"numOfTests should be > 0");
+		assertPositive(job.getOptions().getConcurrency(), "concurrency should be > 0");
+		assertPositive(job.getOptions().getNumOfTests(), "numOfTests should be > 0");
 		job.setResult(new FbJobResult());
 
 		// create a thread pool
 		FbJobOptions options = job.getOptions();
 		FbJobResult result = job.getResult();
-		ExecutorService threadPool = Executors.newFixedThreadPool(
-				options.getConcurrency(), new FbThreadFactory());
+		ExecutorService threadPool = Executors.newFixedThreadPool(options.getConcurrency(), new FbThreadFactory());
 
 		System.out.println("Test started.");
 
@@ -86,10 +85,27 @@ public class FbRunner {
 		private void doIt() {
 			boolean successful = false;
 
+			FbTarget target = job.getTarget();
+			Map<String, Object> context = new LinkedHashMap<String, Object>();
+
+			boolean isCommand = target instanceof FbCommand;
+			FbCommand cmd = isCommand ? (FbCommand) target : null;
+			if (isCommand) {
+				boolean preSuccess = cmd.preInvoke(context);
+				if (!preSuccess) {
+					System.err.println("preInvoke() returns false");
+					return;
+				}
+			}
+
 			StopWatch stopWatch = new StopWatch();
 			stopWatch.start();
 			try {
-				successful = job.getTarget().invoke();
+				if (isCommand) {
+					successful = cmd.invoke(context);
+				} else {
+					successful = target.invoke();
+				}
 			} catch (Exception e) {
 				successful = false;
 			}
@@ -100,13 +116,10 @@ public class FbRunner {
 				job.getResult().getFailedTests().incrementAndGet();
 			}
 
-			job.getResult()
-					.addSingleTestResult(successful, stopWatch.getTime());
+			job.getResult().addSingleTestResult(successful, stopWatch.getTime());
 			int results = job.getResult().getNumOfTests();
-			if (results != 0 && !job.getOptions().isQuiet()
-					&& (job.getResult().getNumOfTests() % 100 == 0)) {
-				System.err.printf("%d/%d are done\n", results, job.getOptions()
-						.getNumOfTests());
+			if (results != 0 && !job.getOptions().isQuiet() && (job.getResult().getNumOfTests() % 100 == 0)) {
+				System.err.printf("%d/%d are done\n", results, job.getOptions().getNumOfTests());
 			}
 		}
 
@@ -126,15 +139,12 @@ public class FbRunner {
 
 		private FbThreadFactory() {
 			SecurityManager s = System.getSecurityManager();
-			group = (s != null) ? s.getThreadGroup() : Thread.currentThread()
-					.getThreadGroup();
-			namePrefix = "fb-runnner-pool-" + poolNumber.getAndIncrement()
-					+ "-thread-";
+			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+			namePrefix = "fb-runnner-pool-" + poolNumber.getAndIncrement() + "-thread-";
 		}
 
 		public Thread newThread(Runnable r) {
-			Thread t = new Thread(group, r, namePrefix
-					+ threadNumber.getAndIncrement(), 0);
+			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
 			if (t.isDaemon())
 				t.setDaemon(false);
 			if (t.getPriority() != Thread.NORM_PRIORITY)
