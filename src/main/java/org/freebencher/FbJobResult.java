@@ -100,7 +100,10 @@ public class FbJobResult {
 	 * @return
 	 */
 	public double getMeanTimePerTest() {
-		long sum = 0;
+        if (singleTestResults.isEmpty()) {
+            return 0;
+        }
+        long sum = 0;
 		for (FbSingleTestResult single : singleTestResults) {
 			sum += single.getTimeTaken();
 		}
@@ -113,10 +116,14 @@ public class FbJobResult {
 	 * @return
 	 */
 	public TreeMap<Double, Long> getPercentInCertainTime() {
+        TreeMap<Double, Long> map = new TreeMap<Double, Long>();
+        if (singleTestResults.isEmpty()) {
+            return map;
+        }
+
 		List<FbSingleTestResult> sortedResults = new ArrayList<FbSingleTestResult>(
 				singleTestResults);
 		Collections.sort(sortedResults);
-		TreeMap<Double, Long> map = new TreeMap<Double, Long>();
 		fillPercentN(map, sortedResults, 0.5);
 		fillPercentN(map, sortedResults, 0.6);
 		fillPercentN(map, sortedResults, 0.7);
@@ -178,7 +185,10 @@ public class FbJobResult {
 	 * the throughput. If you are doing http test, this is the QPS
 	 */
 	public double getTestsPerSecond() {
-		return (double) getNumOfTests() * 1000 / this.getTimeTakenForTests();
+        if (this.getTimeTakenForTests() == 0) {
+            return 0;
+        }
+        return (double) getNumOfTests() * 1000 / this.getTimeTakenForTests();
 	}
 
 	public String report() {
@@ -201,14 +211,17 @@ public class FbJobResult {
 				reportLine("Mean time per test", this.getMeanTimePerTest()
 						+ "ms", vfs)).append("\n");
 
-		report.append("Percentage of the test finished within a certain time (ms)\n");
-		TreeMap<Double, Long> percentInTime = this.getPercentInCertainTime();
-		for (Map.Entry<Double, Long> entry : percentInTime.entrySet()) {
-			Double key = entry.getKey();
-			Long value = entry.getValue();
-			report.append(reportLine(toPercentage(key), value, vfs)).append(
-					"\n");
-		}
+        TreeMap<Double, Long> percentInTime = this.getPercentInCertainTime();
+        if (percentInTime.size() > 0){
+            report.append("Percentage of the test finished within a certain time (ms)\n");
+            for (Map.Entry<Double, Long> entry : percentInTime.entrySet()) {
+                Double key = entry.getKey();
+                Long value = entry.getValue();
+                report.append(reportLine(toPercentage(key), value, vfs)).append(
+                        "\n");
+            }
+        }
+
 
 		return report.toString();
 	}
