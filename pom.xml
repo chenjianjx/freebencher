@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.chenjianjx</groupId>
 	<artifactId>freebencher</artifactId>
-	<version>1.0</version>
+	<version>1.0.1</version>
 	<name>A benchmarking tool which tests anything written in Java</name>
 
 
