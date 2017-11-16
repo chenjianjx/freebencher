@@ -1,54 +1,47 @@
 # freebencher
 
-## A Quick Example
+## Quick start
 
 pom.xml
 
-````
-	<repositories>
-		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
-		</repository>
-		...
-	</repositories>
+```xml
 
+<dependencies>
+	<dependency>
+		<groupId>com.github.chenjianjx</groupId>
+		<artifactId>freebencher</artifactId>
+		<version>2.0.0</version>
+	</dependency>
+	...
+</dependencies>	
 
-	<dependencies>
-		<dependency>
-			<groupId>com.github.chenjianjx</groupId>
-			<artifactId>freebencher</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-		...
-	</dependencies>	
-
-````
+```
 
 Basically, you'll just need to write a callback method.
-````
-	@Test
-	public void testLogin() {
-		
-		final List<User> userList = new ArrayList<User>();
-		...//preparing userList to be used as test data.
 
-		FbJobResult result = Freebencher.benchmark(new FbTarget() { //the behavior
-			@Override
-			public boolean invoke() {
-				User user = userList.get(RandomUtils
-						.nextInt(userList.size()));
-				int statusCode = remoteServiceToTest.doLogin(user.getUsername(), user.getClearPassword());
-				return statusCode == 200;
-			}
-		}, 5, // concurrency,
-				50 // number of tests to run
-				);
+```java
+@Test
+public void testLogin() {
+	
+	final List<User> userList = new ArrayList<User>();
+	...//preparing userList to be used as test data.
 
-		System.out.println(result.report());
-	}
+	FbJobResult result = Freebencher.benchmark(new FbTarget() { //the behavior
+		@Override
+		public boolean invoke() {
+			User user = userList.get(RandomUtils
+					.nextInt(userList.size()));
+			int statusCode = remoteServiceToTest.doLogin(user.getUsername(), user.getClearPassword());
+			return statusCode == 200;
+		}
+	}, 5, // concurrency,
+			50 // number of tests to run
+			);
 
-````
+	System.out.println(result.report());
+}
+
+```
 
 You will get ApacheBench-like output:
 ````
