@@ -7,6 +7,7 @@ pom.xml
 ```xml
 
 <dependencies>
+	...
 	<dependency>
 		<groupId>com.github.chenjianjx</groupId>
 		<artifactId>freebencher</artifactId>
