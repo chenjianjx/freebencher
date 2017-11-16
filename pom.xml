@@ -5,8 +5,10 @@
 	<groupId>com.github.chenjianjx</groupId>
 	<artifactId>freebencher</artifactId>
 	<version>2.0.0</version>
-	<name>A benchmarking tool that can test anything written in Java</name>
-
+	<name>Free-style benchmarking tool written in java</name>
+	<description>A free-style benchmarking tool that can test anything callable by Java. And it produces apache-ab-like results</description>
+	<url>https://github.com/chenjianjx/freebencher</url>
+	
 	<properties>
 		<junit.version>4.9</junit.version>
 		<jdk.version>1.8</jdk.version>
